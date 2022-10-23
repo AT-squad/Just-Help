@@ -731,23 +731,23 @@
 						var i3 = 1;
 						snapshot.forEach((childSnapshot) => {
                             const postId = childSnapshot.key;
-                            lonsole.log("1");
+                            console.log("1");
 							const postIdRef = ref(db, "posts/" + uid + "/" + postId);
                             if (i3 == i) {
-                                lonsole.log("2");
+                                console.log("2");
 								const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
                                 get(userRef).then((snapshot) => {
-                                    lonsole.log("3");
+                                    console.log("3");
                                     if (snapshot.exists()) {
-                                        lonsole.log("4");
+                                        console.log("4");
 										const endtitle = snapshot.val();
                                         remove(postIdRef).then(() => {
-                                            lonsole.log("5");
+                                            console.log("5");
                                             get(child(dbRef, "volunteers/" + i2)).then((snapshot) => {
-                                                lonsole.log("6");
+                                                console.log("6");
 												if (snapshot.exists()) {
 													var pointscount = snapshot.val().points;
-													lonsole.log(pointscount);
+													console.log(pointscount);
 													update(ref(db, "volunteers/" + i2),
 														{
 															points: pointscount + 16
