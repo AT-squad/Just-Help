@@ -7,7 +7,7 @@ Naszym głównym pytaniem, które sobie zadawaliśmy było "Czy w dzisiejszym ś
 Nasz projekt jest oparty głównie na językach takich jak: JavaScript, html, css, python, oraz na rozbudowanym systemie baz danych w Firebase od Google.
 
 Skład drużyny AT squad:
-Łukasz Kucharczyk - główny programista, grafik
-Oliwier Adamczyk - programista, pomysłodawca
-Piort Piskorz - copywriter 
-Bartłomiej Pachniak - copywriter
+Łukasz Kucharczyk - główny programista, grafik;
+Oliwier Adamczyk - programista, pomysłodawca;
+Piort Piskorz - copywriter;
+Bartłomiej Pachniak - copywriter;
