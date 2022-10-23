@@ -3,7 +3,6 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 	<title>Just Help | Potrzebujący</title>
 	<meta name="description" content="Aplikacja internetowa - konkurs Hack Heroes 2022">
 	<meta name="keywords" content="aktywista, charytatywność, charytatywny, dać komuś oparcie, dać oparcie, dla niepełnosprawnych, dla potrzebujących, dla seniorów, dla wolontariatu, dobre uczynki, dobrodziej, dobrowolny uczestnik, doby uczynek, doradztwo, działacz społeczny, e wolontariat, e-wolontariat, help, helpful, helpy, ideowiec, jak pomagać, jak pomoc ukrainie, jak pomóc, lekcje, obywatele, ochotnik, oparcie, oparcie, pobliska pomoc, podaj pomocną dłoń, podaj pomocną rękę, pomoc, pomoc 24/7, pomoc 24h, pomoc domowa, pomoc obywatelom, pomoc starszym, pomoc starszym osobom, pomoc ukrainie, pomoc w lekcjach, pomoc w prostych zadaniach, pomoc w zakupach, pomocny, potrzebujący, praca domowa, prace domowe, przyjacielska dłoń, przysługa, przysługi, senior, społeczna pomoc, społecznik, sąsiedzka pomoc, uczynek, uczynki, volunteer, wolontariat, wolontariat polska, wolontariusz, wpieranie, wsparcie, zadania społeczne, życzliwa dłoń">
@@ -22,6 +21,11 @@
 	<div id="loader-wrapper">
 		<div class="loader2">
 		</div>
+	</div>
+	<div id="test">
+		<h2>Testowe konto:</h2>
+		<p>potrzebujacy@test.test</p>
+		<p>12345678</p>
 	</div>
 	<section id="menu" class="sections">
 		<h1>Masz konto potrzebującego? - Czy jesteś tu nowy/a?</h1>
@@ -559,7 +563,7 @@
 								phone: phone.value,
 								city: city.value,
 								address: address.value,
-                                create: getDateString2(),
+								create: getDateString2(),
 								accept: false
 							})
 							const userRef = ref(db, "necessitous/" + uid + "/username");
@@ -567,8 +571,8 @@
 								if (snapshot.exists()) {
 									const username = snapshot.val();
 									update(newPostRef, {
-                                        author: username,
-                                        accept: false
+										author: username,
+										accept: false
 									})
 										.then(() => {
 											alert("succes", "Utworzono nowe zlecenie!");
@@ -592,7 +596,7 @@
 					const user = auth.currentUser
 					const uid = user.uid;
 					const postsRef = ref(db, "posts/" + uid);
-					const posts = document.getElementById("posts");
+                    const posts = document.getElementById("postsList");
 					onValue(postsRef, (snapshot) => {
 						var i = 1;
 						posts.innerHTML = "";
@@ -634,7 +638,7 @@
 							} else {
 								div.className = "post accepted";
 							}
-							document.getElementById("posts").appendChild(div);
+                            document.getElementById("postsList").appendChild(div);
 
 							if (accept == false) {
 								let btn = document.createElement("button");
@@ -658,7 +662,7 @@
 							div2.innerHTML = "Dodaj";
 							div2.id = "add";
 							div2.addEventListener("click", gotoCreatePostDiv);
-							document.getElementById("posts").appendChild(div2);
+							document.getElementById("postsList").appendChild(div2);
 						}
 					});
 				};
@@ -670,7 +674,7 @@
 			var id = this.closest("button").id;
 			var i = id.substring(id.indexOf('-'), id.lastIndexOf('-')).replace('-', '');
 			var i2 = id.substring(id.lastIndexOf('-')).replace('-', '');
-            postEnding(i, i2);
+			postEnding(i, i2);
 		};
 		function delPost() {
 			document.getElementById("posts").removeChild(this.closest("div"));
@@ -704,7 +708,7 @@
 									if (snapshot.exists()) {
 										const deltitle = snapshot.val();
 										remove(postIdRef).then(() => {
-											alert("warning", "Usunięto zlecenie: " + deltitle);		
+											alert("warning", "Usunięto zlecenie: " + deltitle);
 										});
 									};
 								});
@@ -724,27 +728,27 @@
 				if (user) {
 					const db = getDatabase();
 					const user = auth.currentUser
-                    const uid = user.uid;
-                    const dbRef = ref(db);
+					const uid = user.uid;
+					const dbRef = ref(db);
 					const postsRef = ref(db, "posts/" + uid);
 					onValue(postsRef, (snapshot) => {
 						var i3 = 1;
 						snapshot.forEach((childSnapshot) => {
-                            const postId = childSnapshot.key;
-                            console.log("1");
+							const postId = childSnapshot.key;
+							console.log("1");
 							const postIdRef = ref(db, "posts/" + uid + "/" + postId);
-                            if (i3 == i) {
-                                console.log("2");
+							if (i3 == i) {
+								console.log("2");
 								const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
-                                get(userRef).then((snapshot) => {
-                                    console.log("3");
-                                    if (snapshot.exists()) {
-                                        console.log("4");
+								get(userRef).then((snapshot) => {
+									console.log("3");
+									if (snapshot.exists()) {
+										console.log("4");
 										const endtitle = snapshot.val();
-                                        remove(postIdRef).then(() => {
-                                            console.log("5");
-                                            get(child(dbRef, "volunteers/" + i2)).then((snapshot) => {
-                                                console.log("6");
+										remove(postIdRef).then(() => {
+											console.log("5");
+											get(child(dbRef, "volunteers/" + i2)).then((snapshot) => {
+												console.log("6");
 												if (snapshot.exists()) {
 													var pointscount = snapshot.val().points;
 													console.log(pointscount);
@@ -752,7 +756,7 @@
 														{
 															points: pointscount + 16
 														})
-                                                        .then(() => {
+														.then(() => {
 															alert("warning", "Potwierdzono wykonanie zlecenia: " + endtitle);
 														});
 												};

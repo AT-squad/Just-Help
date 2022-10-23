@@ -390,6 +390,7 @@ section {
 
 
 #postsList {
+	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: center;
@@ -406,7 +407,10 @@ section {
 	align-items: center;
 	width: 300px;
 	word-break: break-word; /*zawija s³owa*/
-	background-color: #373737;
+	background-color: var(--background-color2);
+	padding: 20px;
+	margin: 10px;
+	border-radius: 10px;
 }
 
 
@@ -442,3 +446,38 @@ section {
 
 
 
+
+
+
+
+form {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+
+
+
+#test {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	opacity: 0.2;
+}
+
+#test > h2{
+	margin: 0;
+}
+
+#test > p{
+	margin: 0;
+	padding: 3px;
+}
+
+
+#profile, #tops, form {
+	background-color: var(--background-color2);
+	padding: 20px;
+	margin: 10px;
+	border-radius: 10px;
+}

@@ -3,7 +3,6 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 	<title>Just Help | Wolontariusz</title>
 	<meta name="description" content="Aplikacja internetowa - konkurs Hack Heroes 2022">
 	<meta name="keywords" content="aktywista, charytatywność, charytatywny, dać komuś oparcie, dać oparcie, dla niepełnosprawnych, dla potrzebujących, dla seniorów, dla wolontariatu, dobre uczynki, dobrodziej, dobrowolny uczestnik, doby uczynek, doradztwo, działacz społeczny, e wolontariat, e-wolontariat, help, helpful, helpy, ideowiec, jak pomagać, jak pomoc ukrainie, jak pomóc, lekcje, obywatele, ochotnik, oparcie, oparcie, pobliska pomoc, podaj pomocną dłoń, podaj pomocną rękę, pomoc, pomoc 24/7, pomoc 24h, pomoc domowa, pomoc obywatelom, pomoc starszym, pomoc starszym osobom, pomoc ukrainie, pomoc w lekcjach, pomoc w prostych zadaniach, pomoc w zakupach, pomocny, potrzebujący, praca domowa, prace domowe, przyjacielska dłoń, przysługa, przysługi, senior, społeczna pomoc, społecznik, sąsiedzka pomoc, uczynek, uczynki, volunteer, wolontariat, wolontariat polska, wolontariusz, wpieranie, wsparcie, zadania społeczne, życzliwa dłoń">
@@ -20,6 +19,11 @@
 <body>
 	<div id="loader-wrapper">
 		<div class="loader2"></div>
+	</div>
+	<div id="test">
+		<h2>Testowe konto:</h2>
+		<p>wolontariusz@test.test</p>
+		<p>12345678</p>
 	</div>
 	<section id="menu" class="sections">
 		<h1>Masz konto wolontariusza? - Czy jesteś tu nowy/a?</h1>
@@ -226,7 +230,7 @@
 		};
 		function gotoAcctivePosts() {
 			postsAcctive();
-            document.getElementById("acctive-posts").style.display = "flex";            //dodaj funkcję!
+			document.getElementById("acctive-posts").style.display = "flex";            //dodaj funkcję!
 		};
 		function gotoTops() {
 			top();
@@ -615,14 +619,14 @@
 			onAuthStateChanged(auth, (user) => {
 				if (user) {
 					const user = auth.currentUser;
-                    const thisuserID = user.uid;
+					const thisuserID = user.uid;
 					const db = getDatabase();
 					const postsUidRef = ref(db, "posts");
 					onValue(postsUidRef, (snapshot) => {
 						snapshot.forEach((childSnapshot) => {
 							const userId = childSnapshot.key;
-                            //var postsRef = query(ref(db, "posts/" + userId), orderByChild("accept"), equalTo(thisuserID));
-                            var postsRef = ref(db, "posts/" + userId);
+							//var postsRef = query(ref(db, "posts/" + userId), orderByChild("accept"), equalTo(thisuserID));
+							var postsRef = ref(db, "posts/" + userId);
 
 
 							onValue(postsRef, (snapshot) => {
@@ -631,7 +635,7 @@
 									const postIdRef = ref(db, "posts/" + userId + "/" + postId);
 
 									update(postIdRef, {
-                                        accept: thisuserID
+										accept: thisuserID
 									})
 										.then(() => {
 											alert("succes", "Aktywowałeś nowe zlecenie!");
@@ -652,67 +656,66 @@
 
 
 		function postsAcctive() {
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        const user = auth.currentUser;
-						const thisuserID = user.uid;
-                        const db = getDatabase();
-                        const postsUidRef = ref(db, "posts");
-                        const posts = document.getElementById("acctive-postsList");
-                        var i = 1;
-                        onValue(postsUidRef, (snapshot) => {
-                            posts.innerHTML = "";
-                            document.getElementById("acctive-posts-h1").innerHTML = "Aktywne zlecenia:";
-                            snapshot.forEach((childSnapshot) => {
-                                const userId = childSnapshot.key;
-                                var postsRef = ref(db, "posts/" + userId);
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					const user = auth.currentUser;
+					const thisuserID = user.uid;
+					const db = getDatabase();
+					const postsUidRef = ref(db, "posts");
+					const posts = document.getElementById("acctive-postsList");
+					var i = 1;
+					onValue(postsUidRef, (snapshot) => {
+						posts.innerHTML = "";
+						document.getElementById("acctive-posts-h1").innerHTML = "Aktywne zlecenia:";
+						snapshot.forEach((childSnapshot) => {
+							const userId = childSnapshot.key;
+							var postsRef = ref(db, "posts/" + userId);
 
-                                onValue(postsRef, (snapshot) => {
-                                    snapshot.forEach((childSnapshot) => {
-                                        const postId = childSnapshot.key;
-                                        const postIdRef = ref(db, "posts/" + userId + "/" + postId);
+							onValue(postsRef, (snapshot) => {
+								snapshot.forEach((childSnapshot) => {
+									const postId = childSnapshot.key;
+									const postIdRef = ref(db, "posts/" + userId + "/" + postId);
 
 
-                                        var author = "";
-                                        var title = "";
-                                        var create = "";
-                                        var description = "";
-                                        var city = "";
-                                        var address = "";
-                                        var accept = "";
-                                        var phone = "";
+									var author = "";
+									var title = "";
+									var create = "";
+									var description = "";
+									var city = "";
+									var address = "";
+									var accept = "";
+									var phone = "";
 
-                                        onValue(postIdRef, (snapshot) => {
-                                            if (snapshot.exists()) {
-                                                author = snapshot.val().author;
-                                                create = snapshot.val().create;
-                                                title = snapshot.val().title;
-                                                description = snapshot.val().description;
-                                                city = snapshot.val().city;
-                                                address = snapshot.val().address;
-                                                accept = snapshot.val().accept;
-                                                phone = snapshot.val().phone;
-                                            };
-                                        });
-                                            if (accept == thisuserID) {
-												let div2 = document.createElement("div");
+									onValue(postIdRef, (snapshot) => {
+										if (snapshot.exists()) {
+											author = snapshot.val().author;
+											create = snapshot.val().create;
+											title = snapshot.val().title;
+											description = snapshot.val().description;
+											city = snapshot.val().city;
+											address = snapshot.val().address;
+											accept = snapshot.val().accept;
+											phone = snapshot.val().phone;
+										};
+									});
+									if (accept == thisuserID) {
+										let div2 = document.createElement("div");
 
-												div2.id = "post-" + i;
-												div2.innerHTML = `${city} <br/> ${title} <br/> ${description} <br/> ${author} <br/> ${address} <br/> tel. ${phone} <br/> ${create} <br/>`;
-												div2.className = "post";
-												document.getElementById("acctive-postsList").appendChild(div2);
-											} else {
-                                                alert("warning", "Brak aktywnych zleceń!")
-                                                location.href = "#zlecenia";
-                                            }
-											i++;
-                                        });
-                                    });
-                                });
-                            });
-                        };
-                    });
-                };
+										div2.id = "post-" + i;
+										div2.innerHTML = `${city} <br/> ${title} <br/> ${description} <br/> ${author} <br/> ${address} <br/> tel. ${phone} <br/> ${create} <br/>`;
+										div2.className = "post";
+										document.getElementById("acctive-postsList").appendChild(div2);
+									} else {
+										alert("warning", "Brak aktywnych zleceń!")
+									}
+									i++;
+								});
+							});
+						});
+					});
+				};
+			});
+		};
 
 
 
