@@ -670,6 +670,13 @@
 			var id = this.closest("button").id;
 			var i = id.substring(id.indexOf('-'), id.lastIndexOf('-')).replace('-', '');
 			var i2 = id.substring(id.lastIndexOf('-')).replace('-', '');
+            postEnding(i, i2);
+		};
+		function delPost() {
+			document.getElementById("posts").removeChild(this.closest("div"));
+			var id = this.closest("button").id;
+			var i = id.substring(id.indexOf('-'), id.lastIndexOf('-')).replace('-', '');
+			var i2 = id.substring(id.lastIndexOf('-')).replace('-', '');
 			postRemove(i, i2);
 		};
 
@@ -695,9 +702,61 @@
 								const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
 								get(userRef).then((snapshot) => {
 									if (snapshot.exists()) {
+										const deltitle = snapshot.val();
+										remove(postIdRef).then(() => {
+											alert("warning", "Usunięto zlecenie: " + deltitle);		
+										});
+									};
+								});
+							}
+							i3++;
+						});
+					}, {
+						onlyOnce: true
+					});
+				};
+			});
+		};
+
+
+		function postEnding(i, i2) {
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					const db = getDatabase();
+					const user = auth.currentUser
+                    const uid = user.uid;
+                    const dbRef = ref(db);
+					const postsRef = ref(db, "posts/" + uid);
+					onValue(postsRef, (snapshot) => {
+						var i3 = 1;
+						snapshot.forEach((childSnapshot) => {
+                            const postId = childSnapshot.key;
+                            lonsole.log("1");
+							const postIdRef = ref(db, "posts/" + uid + "/" + postId);
+                            if (i3 == i) {
+                                lonsole.log("2");
+								const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
+                                get(userRef).then((snapshot) => {
+                                    lonsole.log("3");
+                                    if (snapshot.exists()) {
+                                        lonsole.log("4");
 										const endtitle = snapshot.val();
                                         remove(postIdRef).then(() => {
-                                            alert("warning", "Potwierdzono wykonanie zlecenia: " + endtitle);
+                                            lonsole.log("5");
+                                            get(child(dbRef, "volunteers/" + i2)).then((snapshot) => {
+                                                lonsole.log("6");
+												if (snapshot.exists()) {
+													var pointscount = snapshot.val().points;
+													lonsole.log(pointscount);
+													update(ref(db, "volunteers/" + i2),
+														{
+															points: pointscount + 16
+														})
+                                                        .then(() => {
+															alert("warning", "Potwierdzono wykonanie zlecenia: " + endtitle);
+														});
+												};
+											});
 										});
 									};
 								});
