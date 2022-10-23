@@ -3,11 +3,12 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Test | Wolontariusz</title>
+	<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+	<title>Just Help | Wolontariusz</title>
 	<meta name="description" content="">
 	<meta name="keywords" content="aktywista, charytatywność, charytatywny, dać komuś oparcie, dać oparcie, dla niepełnosprawnych, dla potrzebujących, dla seniorów, dla wolontariatu, dobre uczynki, dobrodziej, dobrowolny uczestnik, doby uczynek, doradztwo, działacz społeczny, e wolontariat, e-wolontariat, help, helpful, helpy, ideowiec, jak pomagać, jak pomoc ukrainie, jak pomóc, lekcje, obywatele, ochotnik, oparcie, oparcie, pobliska pomoc, podaj pomocną dłoń, podaj pomocną rękę, pomoc, pomoc 24/7, pomoc 24h, pomoc domowa, pomoc obywatelom, pomoc starszym, pomoc starszym osobom, pomoc ukrainie, pomoc w lekcjach, pomoc w prostych zadaniach, pomoc w zakupach, pomocny, potrzebujący, praca domowa, prace domowe, przyjacielska dłoń, przysługa, przysługi, senior, społeczna pomoc, społecznik, sąsiedzka pomoc, uczynek, uczynki, volunteer, wolontariat, wolontariat polska, wolontariusz, wpieranie, wsparcie, zadania społeczne, życzliwa dłoń">
-	<meta name="author" content="">
-	<meta name="copyright" content="Copyright ">
+	<meta name="author" content="Łukasz Kucharczyk, Oliwier Adamczyk, Piort Piskorz, Bartłomiej Pachniak">
+	<meta name="copyright" content="Copyright Just Help - AT squad">
 
 	<link rel="stylesheet" type="text/css" href="assets/styles/index.css">
 
@@ -61,11 +62,21 @@
 		Utworzono: <div id="profile-account-create"><div class="loader"></div></div><br>
 		<button type="button" id="logout" tabindex="1"><i class="fa-solid fa-lock"></i>&nbsp;Wyloguj</button>
 		<button type="button" onclick="location.href='#zlecenia'">Zlecenia</button>
-		<button type="button" onclick="location.href='#wymiana-punktow'">Wymiana punktów</button>
+		<button type="button" onclick="location.href='#aktywne-zlecenia'">Aktywne zlecenia</button>
+		<!--<button type="button" onclick="location.href='#wymiana-punktow'">Wymiana punktów</button>  W przyszłości-->
 		<button type="button" onclick="location.href='#topka'">Topka</button>
 	</section>
 	<section id="posts" class="sections">
-		<div class="loader"></div>
+		<h1 id="posts-h1"></h1>
+		<div id="postsList">
+			<div class="loader"></div>
+		</div>
+	</section>
+	<section id="acctive-posts" class="sections">
+		<h1 id="acctive-posts-h1"></h1>
+		<div id="acctive-postsList">
+			<div class="loader"></div>
+		</div>
 	</section>
 	<section id="tops" class="sections">
 		<h1 id="tops-h1"></h1>
@@ -79,11 +90,13 @@
 	<iframe id="iframe" scrolling="no" frameBorder="0" src="https://chatbothackheroes.pythonanywhere.com/"></iframe>
 
 	<button id="iframe-btn"><i class="fa-solid fa-comments fa-2x"></i></button>
+	<button id="back-btn"><i class="fa-solid fa-backward fa-2x"></i></button>
 
 
 	<div id="alert"><h3 id="alert-message"></h3><div id="alert-unload"></div></div>
 	<script src="assets/scripts/loader.js"></script>
 	<script src="assets/scripts/iframe.js"></script>
+	<script src="assets/scripts/back.js"></script>
 	<script src="assets/scripts/alert.js"></script>
 	<script src="assets/scripts/date.js"></script>
 	<script src="assets/scripts/reg.js"></script>
@@ -93,7 +106,7 @@
 
 
 		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-        import { getDatabase, ref, set, child, get, update, remove, onValue, push, query, orderByChild, orderByValue, equalTo, limitToFirst, limitToLast } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+		import { getDatabase, ref, set, child, get, update, remove, onValue, push, query, orderByChild, orderByValue, equalTo, limitToFirst, limitToLast } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 		import { getAuth, createUserWithEmailAndPassword, setPersistence, signInWithEmailAndPassword, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-auth.js";
 
 		const firebaseConfig = {
@@ -159,14 +172,17 @@
 				gotoLogin();
 			} else if (hash == "tworzenie-konta") {
 				gotoRegister();
-            } else if (hash == "profil") {
-                chceckLogin2();
+			} else if (hash == "profil") {
+				chceckLogin2();
 				gotoProfile();
-            } else if (hash == "zlecenia") {
-                chceckLogin2();
+			} else if (hash == "zlecenia") {
+				chceckLogin2();
 				gotoPosts();
+			} else if (hash == "aktywne-zlecenia") {
+				chceckLogin2();
+				gotoAcctivePosts();
 			} else if (hash == "topka") {
-                chceckLogin2();
+				chceckLogin2();
 				gotoTops();
 			} else if (hash == "") {
 				gotoMenu();
@@ -176,28 +192,28 @@
 			}
 
 			if (hash != "") {
-				document.title = ("Test | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
+				document.title = ("Just Help | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
 			} else {
-				document.title = ("Test | Wolontariusz");
+				document.title = ("Just Help | Wolontariusz");
 			}
 		};
 
 		document.addEventListener("visibilitychange", function () {
 			if (document.hidden) {
-				document.title = ("Test | Wróć Do Nas!");
+				document.title = ("Just Help | Wróć Do Nas!");
 			}
 			else {
 				var hash = window.location.hash.substring(1);
 				if (hash != "") {
-					document.title = ("Test | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
+					document.title = ("Just Help | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
 				} else {
-					document.title = ("Test | Wolontariusz");
+					document.title = ("Just Help | Wolontariusz");
 				}
 			}
 		});
 
-        function gotoMenu() {
-            alert("info", "Wybierz!");
+		function gotoMenu() {
+			alert("info", "Wybierz!");
 			document.getElementById("menu").style.display = "block";
 		};
 		function gotoProfile() {
@@ -207,6 +223,10 @@
 		function gotoPosts() {
 			posts();
 			document.getElementById("posts").style.display = "flex";
+		};
+		function gotoAcctivePosts() {
+			postsAcctive();
+            document.getElementById("acctive-posts").style.display = "flex";            //dodaj funkcję!
 		};
 		function gotoTops() {
 			top();
@@ -267,22 +287,22 @@
 			}
 			if (validate_email(email) == false) {
 				email.value = "";
-                email.focus();
-                alert("error", "Błędny email!");
+				email.focus();
+				alert("error", "Błędny email!");
 				return
 			}
 			if (validate_password(password) == false) {
 				password.value = "";
 				confirmpassword.value = "";
-                password.focus();
-                alert("error", "Hasło - min 7 znaków!");
+				password.focus();
+				alert("error", "Hasło - min 7 znaków!");
 				return
 			}
 			if (validate_confirmpassword(password, confirmpassword) == false) {
 				password.value = "";
 				confirmpassword.value = "";
-                password.focus();
-                alert("error", "Błędnie powtórzone hasło!");
+				password.focus();
+				alert("error", "Błędnie powtórzone hasło!");
 				return
 			}
 			createUserWithEmailAndPassword(auth, email.value, password.value)
@@ -301,15 +321,15 @@
 								account_create: getDateString(),
 								points: 12
 							})
-                            .then(() => {
-                                alert("succes", "Zarejestrowano!");
+							.then(() => {
+								alert("succes", "Zarejestrowano!");
 								location.href = "#logowanie";
 							})
 							.catch((error) => {
 								password.value = "";
 								confirmpassword.value = "";
-                                password.focus();
-                                alert("error", "Takie konto już istnieje!");
+								password.focus();
+								alert("error", "Takie konto już istnieje!");
 								return
 							});
 					})
@@ -317,8 +337,8 @@
 				.catch((error) => {
 					password.value = "";
 					confirmpassword.value = "";
-                    password.focus();
-                    alert("error", "Takie konto już istnieje!");
+					password.focus();
+					alert("error", "Takie konto już istnieje!");
 					return
 				});
 		};
@@ -381,20 +401,20 @@
 								})
 								.catch((error) => {
 									password.value = "";
-                                    password.focus();
-                                    alert("error", "Błędne dane logowania!");
+									password.focus();
+									alert("error", "Błędne dane logowania!");
 									return
 								});
-                        } else {
-                            alert("warning", "Wykryto złe konto!")
+						} else {
+							alert("warning", "Wykryto złe konto!")
 							silentlogout();
 						};
 					})
 				})
 				.catch((error) => {
 					password.value = "";
-                    password.focus();
-                    alert("error", "Błędne dane logowania!");
+					password.focus();
+					alert("error", "Błędne dane logowania!");
 					return
 				});
 		};
@@ -404,8 +424,8 @@
 			const auth = getAuth();
 			signOut(auth).then(() => {
 				location.replace('index.html');
-            }).catch((error) => {
-                alert("error", "Błąd wylogowywania!");
+			}).catch((error) => {
+				alert("error", "Błąd wylogowywania!");
 			});
 		}
 
@@ -414,8 +434,8 @@
 			signOut(auth).then(() => {
 				alert("info", "Zaloguj się!");
 				location.href = "#logowanie";
-            }).catch((error) => {
-                alert("error", "Błąd wylogowywania!");
+			}).catch((error) => {
+				alert("error", "Błąd wylogowywania!");
 			});
 		}
 
@@ -438,13 +458,13 @@
 							document.getElementById("profile-points").innerHTML = snapshot.val().points;
 							document.getElementById("profile-email").innerHTML = snapshot.val().email;
 							document.getElementById("profile-account-create").innerHTML = snapshot.val().account_create;
-                        } else {
-                            alert("warning", "Wykryto złe konto!")
+						} else {
+							alert("warning", "Wykryto złe konto!")
 							silentlogout();
 						}
 					});
-                } else {
-                    silentlogout();
+				} else {
+					silentlogout();
 				}
 			});
 		};
@@ -457,8 +477,8 @@
 					const uid = user.uid;
 					const emailRef = ref(db, 'volunteers/' + uid + '/email');
 					onValue(emailRef, (snapshot) => {
-                        if (snapshot.exists()) {
-                            alert("succes", "Zalogowano!");
+						if (snapshot.exists()) {
+							alert("succes", "Zalogowano!");
 							location.href = "#profil";
 						} else {
 							alert("info", "Wykryto inne konto - wylogowano!")
@@ -472,23 +492,23 @@
 			});
 		}
 
-        function chceckLogin2() {
-            const db = getDatabase();
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    const uid = user.uid;
-                    const emailRef = ref(db, "volunteers/" + uid + "/email");
-                    onValue(emailRef, (snapshot) => {
-                        if (snapshot.exists()) {
-                        } else {
-                            silentlogout();
-                        };
-                    });
-                } else {
-                    location.href = "#logowanie";
-                }
-            });
-        }
+		function chceckLogin2() {
+			const db = getDatabase();
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					const uid = user.uid;
+					const emailRef = ref(db, "volunteers/" + uid + "/email");
+					onValue(emailRef, (snapshot) => {
+						if (snapshot.exists()) {
+						} else {
+							silentlogout();
+						};
+					});
+				} else {
+					location.href = "#logowanie";
+				}
+			});
+		}
 
 
 
@@ -520,13 +540,14 @@
 				if (user) {
 					const db = getDatabase();
 					const postsUidRef = ref(db, "posts");
-					const posts = document.getElementById("posts");
-                    var i = 1;
-                    onValue(postsUidRef, (snapshot) => {
-                        posts.innerHTML = "";
+					const posts = document.getElementById("postsList");
+					var i = 1;
+					onValue(postsUidRef, (snapshot) => {
+						posts.innerHTML = "";
+						document.getElementById("posts-h1").innerHTML = "Aktualne zlecenia:";
 						snapshot.forEach((childSnapshot) => {
 							const userId = childSnapshot.key;
-                            var postsRef = query(ref(db, "posts/" + userId), orderByChild("accept"), equalTo(false));
+							var postsRef = query(ref(db, "posts/" + userId), orderByChild("accept"), equalTo(false));
 
 							onValue(postsRef, (snapshot) => {
 								const count = snapshot.size;
@@ -543,11 +564,9 @@
 										var title = "";
 										var create = "";
 										var description = "";
-										var phone = "";
 										var city = "";
 										var address = "";
 										var accept = "";
-										var finish = "";
 
 										onValue(postIdRef, (snapshot) => {
 											if (snapshot.exists()) {
@@ -555,28 +574,29 @@
 												create = snapshot.val().create;
 												title = snapshot.val().title;
 												description = snapshot.val().description;
-												phone = snapshot.val().phone;
 												city = snapshot.val().city;
 												address = snapshot.val().address;
 												accept = snapshot.val().accept;
-												finish = snapshot.val().finish;
 											};
 										});
 										if (accept == false) {
 
-                                            let div = document.createElement("div");
+											let div = document.createElement("div");
 
-                                            div.id = "post-" + i;
-                                            div.innerHTML = `${city} <br/> ${title} <br/> ${description} <br/> ${author} <br/> ${address} <br/> tel. ${phone} <br/> ${create} <br/>`;
-                                            div.className = "post";
-											document.getElementById("posts").appendChild(div);
+											div.id = "post-" + i;
+											div.innerHTML = `${city} <br/> ${title} <br/> ${description} <br/> ${author} <br/> ${address} <br/> tel. -ukryty- <br/> ${create} <br/>`;
+											div.className = "post";
+											document.getElementById("postsList").appendChild(div);
 
-                                            let btn2 = document.createElement("button");
-                                            btn2.innerHTML = "Przyjmij zlecenie";
-                                            btn2.id = `btn3-${i}`;
-                                            btn2.addEventListener("click", acceptPost);
-                                            document.getElementById("post-" + i).appendChild(btn2);                                        };
-                                        i++;                                    });								};
+											let btn2 = document.createElement("button");
+											btn2.innerHTML = "Przyjmij zlecenie";
+											btn2.id = `btn3-${i}`;
+											btn2.addEventListener("click", acceptPost);
+											document.getElementById("post-" + i).appendChild(btn2);
+										};
+										i++;
+									});
+								};
 							});
 						});
 					});
@@ -585,20 +605,163 @@
 		};
 
 		function acceptPost() {
+			document.getElementById("postsList").removeChild(this.closest("div"));
+			var id = this.closest("button").id;
+			var i = id.substring(id.indexOf('-')).replace('-', '');
+			postAccept(i);
+		}
 
-        }
+		function postAccept(i) {
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					const user = auth.currentUser;
+                    const thisuserID = user.uid;
+					const db = getDatabase();
+					const postsUidRef = ref(db, "posts");
+					onValue(postsUidRef, (snapshot) => {
+						snapshot.forEach((childSnapshot) => {
+							const userId = childSnapshot.key;
+                            //var postsRef = query(ref(db, "posts/" + userId), orderByChild("accept"), equalTo(thisuserID));
+                            var postsRef = ref(db, "posts/" + userId);
+
+
+							onValue(postsRef, (snapshot) => {
+								snapshot.forEach((childSnapshot) => {
+									const postId = childSnapshot.key;
+									const postIdRef = ref(db, "posts/" + userId + "/" + postId);
+
+									update(postIdRef, {
+                                        accept: thisuserID
+									})
+										.then(() => {
+											alert("succes", "Aktywowałeś nowe zlecenie!");
+											location.href = "#aktywne-zlecenia";
+										});
+								});
+							});
+						});
+					});
+				};
+			});
+		};
+
+
+
+
+
+
+
+		function postsAcctive() {
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        const user = auth.currentUser;
+						const thisuserID = user.uid;
+                        const db = getDatabase();
+                        const postsUidRef = ref(db, "posts");
+                        const posts = document.getElementById("acctive-postsList");
+                        var i = 1;
+                        onValue(postsUidRef, (snapshot) => {
+                            posts.innerHTML = "";
+                            document.getElementById("acctive-posts-h1").innerHTML = "Aktywne zlecenia:";
+                            snapshot.forEach((childSnapshot) => {
+                                const userId = childSnapshot.key;
+                                var postsRef = ref(db, "posts/" + userId);
+
+                                onValue(postsRef, (snapshot) => {
+                                    snapshot.forEach((childSnapshot) => {
+                                        const postId = childSnapshot.key;
+                                        const postIdRef = ref(db, "posts/" + userId + "/" + postId);
+
+
+                                        var author = "";
+                                        var title = "";
+                                        var create = "";
+                                        var description = "";
+                                        var city = "";
+                                        var address = "";
+                                        var accept = "";
+                                        var phone = "";
+
+                                        onValue(postIdRef, (snapshot) => {
+                                            if (snapshot.exists()) {
+                                                author = snapshot.val().author;
+                                                create = snapshot.val().create;
+                                                title = snapshot.val().title;
+                                                description = snapshot.val().description;
+                                                city = snapshot.val().city;
+                                                address = snapshot.val().address;
+                                                accept = snapshot.val().accept;
+                                                phone = snapshot.val().phone;
+                                            };
+                                        });
+                                            if (accept == thisuserID) {
+												let div2 = document.createElement("div");
+
+												div2.id = "post-" + i;
+												div2.innerHTML = `${city} <br/> ${title} <br/> ${description} <br/> ${author} <br/> ${address} <br/> tel. ${phone} <br/> ${create} <br/>`;
+												div2.className = "post";
+												document.getElementById("acctive-postsList").appendChild(div2);
+											} else {
+                                                alert("warning", "Brak aktywnych zleceń!")
+                                                location.href = "#zlecenia";
+                                            }
+											i++;
+                                        });
+                                    });
+                                });
+                            });
+                        };
+                    });
+                };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		function top() {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    const db = getDatabase();
-                    const topsUidRef = query(ref(db, "volunteers"), orderByChild("points"), limitToFirst(10));
-                    const tops = document.getElementById("topsList");
-                    onValue(topsUidRef, (snapshot) => {
-                        tops.innerHTML = "";
-                        document.getElementById("tops-h1").innerHTML = "Top 10";
-                        var i = snapshot.size;
-                        snapshot.forEach((childSnapshot) => {
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					const db = getDatabase();
+					const topsUidRef = query(ref(db, "volunteers"), orderByChild("points"), limitToFirst(10));
+					const tops = document.getElementById("topsList");
+					onValue(topsUidRef, (snapshot) => {
+						tops.innerHTML = "";
+						document.getElementById("tops-h1").innerHTML = "Top 10";
+						var i = snapshot.size;
+						snapshot.forEach((childSnapshot) => {
 							const userId = childSnapshot.key;
 							var topsRef = ref(db, 'volunteers/' + userId);
 
@@ -606,26 +769,26 @@
 							var points2 = "";
 							var create2 = "";
 
-                            onValue(topsRef, (snapshot) => {
+							onValue(topsRef, (snapshot) => {
 								if (snapshot.exists()) {
 									username2 = snapshot.val().username;
 									points2 = snapshot.val().points;
-                                    create2 = snapshot.val().account_create;
+									create2 = snapshot.val().account_create;
 								};
 
-                            });
+							});
 							let div3 = document.createElement("div");
 
-                            div3.id = "top-" + i;
-                            div3.innerHTML = `<div>${i}. ${username2} ${create2}</div> <div><i class="fa-solid fa-fire-flame-curved points"></i>${points2}</div>`;
-                            div3.className = "top";
-                            document.getElementById("topsList").appendChild(div3);
-                            i--;
+							div3.id = "top-" + i;
+							div3.innerHTML = `<div>${i}. ${username2} ${create2}</div> <div><i class="fa-solid fa-fire-flame-curved points"></i>${points2}</div>`;
+							div3.className = "top";
+							document.getElementById("topsList").appendChild(div3);
+							i--;
 						});
 					});
-                };
-            });
-        };
+				};
+			});
+		};
 
 
 	</script>

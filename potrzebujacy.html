@@ -4,11 +4,11 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-	<title>Test | Wolontariusz</title>
+	<title>Just Help | Potrzebujący</title>
 	<meta name="description" content="">
 	<meta name="keywords" content="aktywista, charytatywność, charytatywny, dać komuś oparcie, dać oparcie, dla niepełnosprawnych, dla potrzebujących, dla seniorów, dla wolontariatu, dobre uczynki, dobrodziej, dobrowolny uczestnik, doby uczynek, doradztwo, działacz społeczny, e wolontariat, e-wolontariat, help, helpful, helpy, ideowiec, jak pomagać, jak pomoc ukrainie, jak pomóc, lekcje, obywatele, ochotnik, oparcie, oparcie, pobliska pomoc, podaj pomocną dłoń, podaj pomocną rękę, pomoc, pomoc 24/7, pomoc 24h, pomoc domowa, pomoc obywatelom, pomoc starszym, pomoc starszym osobom, pomoc ukrainie, pomoc w lekcjach, pomoc w prostych zadaniach, pomoc w zakupach, pomocny, potrzebujący, praca domowa, prace domowe, przyjacielska dłoń, przysługa, przysługi, senior, społeczna pomoc, społecznik, sąsiedzka pomoc, uczynek, uczynki, volunteer, wolontariat, wolontariat polska, wolontariusz, wpieranie, wsparcie, zadania społeczne, życzliwa dłoń">
-	<meta name="author" content="">
-	<meta name="copyright" content="Copyright ">
+	<meta name="author" content="Łukasz Kucharczyk, Oliwier Adamczyk, Piort Piskorz, Bartłomiej Pachniak">
+	<meta name="copyright" content="Copyright Just Help - AT squad">
 
 	<link rel="stylesheet" type="text/css" href="assets/styles/index.css">
 	<link rel="stylesheet" type="text/css" href="assets/styles/relative.css">
@@ -98,16 +98,21 @@
 	</section>
 
 	<section id="posts" class="sections">
-		<div class="loader"></div>
+		<h1 id="posts-h1"></h1>
+		<div id="postsList">
+			<div class="loader"></div>
+		</div>
 	</section>
 
 	<button id="iframe-btn"><i class="fa-solid fa-comments fa-2x"></i></button>
+	<button id="back-btn"><i class="fa-solid fa-backward fa-2x"></i></button>
 	<iframe id="iframe" scrolling="no" frameBorder="0" src="https://chatbothackheroes.pythonanywhere.com/"></iframe>
 
 
 	<div id="alert"><h3 id="alert-message"></h3><div id="alert-unload"></div></div>
 	<script src="assets/scripts/loader.js"></script>
 	<script src="assets/scripts/iframe.js"></script>
+	<script src="assets/scripts/back.js"></script>
 	<script src="assets/scripts/alert.js"></script>
 	<script src="assets/scripts/date.js"></script>
 	<script src="assets/scripts/reg.js"></script>
@@ -203,22 +208,22 @@
 			}
 
 			if (hash != "") {
-				document.title = ("Test | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
+				document.title = ("Just Help | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
 			} else {
-				document.title = ("Test | Potrzebujący");
+				document.title = ("Just Help | Potrzebujący");
 			}
 		};
 
 		document.addEventListener("visibilitychange", function () {
 			if (document.hidden) {
-				document.title = ("Test | Wróć Do Nas!");
+				document.title = ("Just Help | Wróć Do Nas!");
 			}
 			else {
 				var hash = window.location.hash.substring(1);
 				if (hash != "") {
-					document.title = ("Test | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
+					document.title = ("Just Help | " + (hash.charAt(0).toUpperCase() + hash.slice(1)));
 				} else {
-					document.title = ("Test | Potrzebujący");
+					document.title = ("Just Help | Potrzebujący");
 				}
 			}
 		});
@@ -240,7 +245,7 @@
 		};
 		function gotoPosts() {
 			posts();
-            document.getElementById("posts").style.display = "flex";
+			document.getElementById("posts").style.display = "flex";
 		};
 		function gotoLogin() {
 			alert("info", "Zaloguj się!");
@@ -554,21 +559,21 @@
 								phone: phone.value,
 								city: city.value,
 								address: address.value,
-								create: getDateString2()
+                                create: getDateString2(),
+								accept: false
 							})
 							const userRef = ref(db, "necessitous/" + uid + "/username");
 							get(userRef).then((snapshot) => {
 								if (snapshot.exists()) {
 									const username = snapshot.val();
 									update(newPostRef, {
-										author: username,
-										accept: false,
-										finish: false
+                                        author: username,
+                                        accept: false
 									})
-									.then(() => {
-										alert("succes", "Utworzono nowe zlecenie!");
-										location.href = "#zlecenia";
-									});
+										.then(() => {
+											alert("succes", "Utworzono nowe zlecenie!");
+											location.href = "#zlecenia";
+										});
 								};
 							});
 						}
@@ -587,10 +592,10 @@
 					const user = auth.currentUser
 					const uid = user.uid;
 					const postsRef = ref(db, "posts/" + uid);
-                    const posts = document.getElementById("posts");
+					const posts = document.getElementById("posts");
 					onValue(postsRef, (snapshot) => {
-                        var i = 1;
-                        posts.innerHTML = "";
+						var i = 1;
+						posts.innerHTML = "";
 						snapshot.forEach((childSnapshot) => {
 							var count = snapshot.size;
 							const postId = childSnapshot.key;
@@ -606,7 +611,6 @@
 							var city = "";
 							var address = "";
 							var accept = "";
-							var finish = "";
 
 							onValue(postIdRef, (snapshot) => {
 								if (snapshot.exists()) {
@@ -618,7 +622,6 @@
 									city = snapshot.val().city;
 									address = snapshot.val().address;
 									accept = snapshot.val().accept;
-									finish = snapshot.val().finish;
 								};
 							});
 
@@ -642,49 +645,32 @@
 
 							} else {
 								alert("succes", "Przyjęto twoje zlecenie - czekaj na telefon!")
-									let btn3 = document.createElement("button");
-									btn3.innerHTML = "Anuluj";
-									btn3.id = `btn3-${i}-${accept}`;
-									btn3.addEventListener("click", delPost);
-									document.getElementById("post-" + i).appendChild(btn3);
-								if (finish == true) {
-									alert("succes", "Ukończono zlecenie - potwierdź!")
-									let btn2 = document.createElement("button");
-									btn2.innerHTML = "Potwierź";
-									btn2.id = `btn3-${i}-${accept}`;
-									btn2.addEventListener("click", endPost);
-									document.getElementById("post-" + i).appendChild(btn2);
-								};
+								let btn3 = document.createElement("button");
+								btn3.innerHTML = "Zakończ";
+								btn3.id = `btn3-${i}-${accept}`;
+								btn3.addEventListener("click", endPost);
+								document.getElementById("post-" + i).appendChild(btn3);
 							};
 							i++;
 						});
-                        if (i - 1 < 2) {
-                            let div2 = document.createElement("div");
-                            div2.innerHTML = "Dodaj";
-                            div2.id = "add";
-                            div2.addEventListener("click", gotoCreatePostDiv);
-                            document.getElementById("posts").appendChild(div2);
-                        }
+						if (i - 1 < 2) {
+							let div2 = document.createElement("div");
+							div2.innerHTML = "Dodaj";
+							div2.id = "add";
+							div2.addEventListener("click", gotoCreatePostDiv);
+							document.getElementById("posts").appendChild(div2);
+						}
 					});
 				};
 			});
 		};
 
-		function delPost() {
-            document.getElementById("posts").removeChild(this.closest("div"));
-			var id = this.closest("button").id;
-            var i = id.substring(id.indexOf('-'), id.lastIndexOf('-')).replace('-', '');
-            var i2 = id.substring(id.lastIndexOf('-')).replace('-', '');
-			postRemove(i, i2);
-		};
-		
-
 		function endPost() {
-            document.getElementById("posts").removeChild(this.closest("div"));
+			document.getElementById("posts").removeChild(this.closest("div"));
 			var id = this.closest("button").id;
-            var i = id.substring(id.indexOf('-'), id.lastIndexOf('-')).replace('-', '');
-            var i2 = id.substring(id.lastIndexOf('-')).replace('-', '');
-            postEnding(i, i2);
+			var i = id.substring(id.indexOf('-'), id.lastIndexOf('-')).replace('-', '');
+			var i2 = id.substring(id.lastIndexOf('-')).replace('-', '');
+			postRemove(i, i2);
 		};
 
 
@@ -703,88 +689,27 @@
 					onValue(postsRef, (snapshot) => {
 						var i3 = 1;
 						snapshot.forEach((childSnapshot) => {
-                            const postId = childSnapshot.key;
-                            const postIdRef = ref(db, "posts/" + uid + "/" + postId);
-                            if (i3 == i) {
-                                const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
-                                get(userRef).then((snapshot) => {
-                                    if (snapshot.exists()) {
-                                        const removetitle = snapshot.val();
-                                        remove(postIdRef).then(() => {
-                                            alert("warning", "Usunięto zlecenie: " + removetitle);
-                                        });
-                                    };
-                                });
-                            }
-							i3++;
-						});
-					}, {
-						onlyOnce: true
-					});
-				};
-			});
-		};
-		
-
-
-
-
-
-		function postEnding(i, i2) {
-			onAuthStateChanged(auth, (user) => {
-				if (user) {
-					const db = getDatabase();
-					const user = auth.currentUser
-					const uid = user.uid;
-					const postsRef = ref(db, "posts/" + uid);
-					onValue(postsRef, (snapshot) => {
-						var i3 = 1;
-						snapshot.forEach((childSnapshot) => {
 							const postId = childSnapshot.key;
-                            const postIdRef = ref(db, "posts/" + uid + "/" + postId);
+							const postIdRef = ref(db, "posts/" + uid + "/" + postId);
 							if (i3 == i) {
-                                const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
-                                get(userRef).then((snapshot) => {
-                                    if (snapshot.exists()) {
-                                        const endtitle = snapshot.val();
+								const userRef = ref(db, "posts/" + uid + "/" + postId + "/title");
+								get(userRef).then((snapshot) => {
+									if (snapshot.exists()) {
+										const endtitle = snapshot.val();
                                         remove(postIdRef).then(() => {
                                             alert("warning", "Potwierdzono wykonanie zlecenia: " + endtitle);
-                                        });
-                                    };
-                                });
+										});
+									};
+								});
 							}
 							i3++;
 						});
 					}, {
 						onlyOnce: true
 					});
-
-
-                    const userRef = ref(db, "necessitous/" + uid + "/username");
-                    get(userRef).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            const username = snapshot.val();
-                            update(newPostRef, {
-                                author: username,
-                                accept: false,
-                                finish: false
-                            })
-                                .then(() => {
-                                    alert("succes", "Utworzono nowe zlecenie!");
-                                    location.href = "#zlecenia";
-                                });
-                        };
-                    });
-
-
-
 				};
 			});
 		};
-
-	
-
-
-</script>
+	</script>
 </body>
 </html>
